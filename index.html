@@ -250,7 +250,7 @@
 					}
 					
 					let givenDate = date.split(' ');
-					let reformattedDate = givenDate[0].split('/')[2] + '-' + givenDate[0].split('/')[1] + '-' + givenDate[0].split('/')[0] +' '+ givenDate[1];
+					let reformattedDate = parseInt(givenDate[0].split('/')[2]) + '-' + parseInt(givenDate[0].split('/')[1]) + '-' + parseInt(givenDate[0].split('/')[0]) +' '+ givenDate[1];
 					
 					const DAY_IN_MS = 86400000; // 24 * 60 * 60 * 1000
 					const today = new Date();
@@ -259,16 +259,16 @@
 					const day = d.getDate();
   					const month = MONTH_NAMES[d.getMonth()];
 
-					const seconds = Math.round((today - d) / 1000);
-  					const minutes = Math.round(seconds / 60);
-					const hours = Math.round(minutes / 60);
+					const seconds = parseInt(Math.round((today - d) / 1000));
+  					const minutes = parseInt(Math.round(seconds / 60));
+					const hours = parseInt(Math.round(minutes / 60));
 
 					if (seconds < 60) {
-						return `${ seconds }s ago, ${month} ${day}`;
+						return `${seconds}s ago, ${month} ${day}`;
 					} else if (minutes < 60) {
-						return `${ minutes }m ago, ${month} ${day}`;
+						return `${minutes}m ago, ${month} ${day}`;
 					} else {
-						return `${ hours }h ago, ${month} ${day}`;
+						return `${hours}h ago, ${month} ${day}`;
 					}
 				},
 
