@@ -5,6 +5,7 @@
 	<meta name="title" content="Northeast COVID19 Tracker">
 	<meta name="description" content="COVID19 Coronavirus Pandemic stats from Northeast India. Track total confirmed, active, recovered and death cases in the Northeast region of India.">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="refresh" content="900">
 
 	<title>Northeast COVID19 Tracker</title>
 	
@@ -18,6 +19,8 @@
 	<meta property="twitter:url" content="https://covid19northeast.netlify.com/">
 	<meta property="twitter:title" content="Northeast COVID19 Tracker">
 	<meta property="twitter:description" content="COVID19 Coronavirus Pandemic stats from Northeast India. Track total confirmed, active, recovered and death cases in the Northeast region of India.">
+
+	<link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
 
 	<link rel="stylesheet" href="tailwind.css">
 	<script src="alpine.js" defer></script>
@@ -51,6 +54,12 @@
 
 			<div class="px-4">
 				<div class="container mx-auto py-10 -mt-24">
+
+					<div class="px-8 py-5 bg-white rounded-lg shadow mb-5" style="min-height: 350px;">
+						<div class="font-bold uppercase tracking-wide text-gray-800 mb-2">India</div>
+						<div id="chart"></div>
+					</div>
+
 					<div class="px-4 pt-3 pb-0 md:py-3 bg-white rounded-lg shadow mb-5"> 
 						<div class="font-bold uppercase tracking-wide text-gray-800 mb-2">India</div>
 						 
@@ -146,6 +155,7 @@
 		<!-- /Modal -->
 	</div>
 
+	<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 	<script>
 		const neStates = [
 			"Assam",
@@ -160,6 +170,7 @@
 
 		function app() {
 			return {
+				casesTimeSeries: [],
 				states: [],
 				summary: {},
 				districtData: [],
@@ -180,7 +191,16 @@
 								}
 							}).sort((a, b) => b.confirmed - a.confirmed);
 
-							console.log(this.states);
+							this.casesTimeSeries['confirmed'] = data.cases_time_series.slice(data.cases_time_series.length - 10, data.cases_time_series.length).map(ts => ts.dailyconfirmed);
+							
+							this.casesTimeSeries['recovered'] = data.cases_time_series.slice(data.cases_time_series.length - 10, data.cases_time_series.length).map(ts => ts.dailyrecovered);
+							
+							this.casesTimeSeries['death'] = data.cases_time_series.slice(data.cases_time_series.length - 10, data.cases_time_series.length).map(ts => ts.dailydeceased);
+							
+							this.casesTimeSeries['dates'] = data.cases_time_series.slice(data.cases_time_series.length - 10, data.cases_time_series.length).map(ts => ts.date);
+
+							this.drawSeriesChart();
+							// console.log(this.casesTimeSeries);
 						});
 				},
 
@@ -202,6 +222,66 @@
 			
 				formatNumber(number) {
 					return new Intl.NumberFormat().format(number);
+				},
+
+				drawSeriesChart() {
+					let options = {
+						series: [
+							{
+								name: 'Daily Confirmed',
+								data: this.casesTimeSeries['confirmed']
+							}, {
+								name: 'Daily Recovered',
+								data: this.casesTimeSeries['recovered']
+							}, {
+								name: 'Daily Deaths',
+								data: this.casesTimeSeries['death']
+							}
+						],
+						chart: {
+							type: 'area',
+							stacked: false,
+							height: 350,
+							zoom: {
+								enabled: false
+							},
+						},
+						stroke: {
+							width: 2,
+							curve: 'smooth'
+						},
+						dataLabels: {
+							enabled: false
+						},
+						fill: {
+							type: 'gradient',
+							gradient: {
+								shadeIntensity: 1,
+								inverseColors: false,
+								opacityFrom: 0.45,
+								opacityTo: 0.05,
+								stops: [20, 100, 100, 100]
+							},
+						},
+						labels: this.casesTimeSeries['dates'],
+						tickPlacement: 'between',
+						xaxis: {
+							type: 'category'
+						},
+						title: {
+							text: 'Last 10 days cases',
+							align: 'left',
+							offsetX: -9
+						},
+						legend: {
+							position: 'top',
+							horizontalAlign: 'right',
+							offsetX: -10
+						}
+					};
+
+					var chart = new ApexCharts(document.querySelector("#chart"), options);
+					chart.render();
 				}
 			}
 		}
