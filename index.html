@@ -35,8 +35,7 @@
 </head>
 
 <body class="antialiased sans-serif bg-gray-300">
-	<div x-data="app()" x-init="getDataByState()" x-cloak class="flex flex-col min-h-screen">
-		 
+	<div x-data="app()" x-init="getDataByState()" x-cloak class="flex flex-col min-h-screen">		 
 		<div class="flex-1">
 
 			<!-- Header -->
@@ -55,9 +54,9 @@
 			<div class="px-4">
 				<div class="container mx-auto py-10 -mt-24">
 
-					<div class="px-8 py-5 bg-white rounded-lg shadow mb-5" style="min-height: 350px;">
+					<div class="px-4 py-5 bg-white rounded-lg shadow mb-5" style="min-height: 300px;">
 						<div class="font-bold uppercase tracking-wide text-gray-800 mb-2">India</div>
-						<div id="chart"></div>
+						<div id="chart" class="-ml-4 -mr-2"></div>
 					</div>
 
 					<div class="px-4 pt-3 pb-0 md:py-3 bg-white rounded-lg shadow mb-5"> 
@@ -168,6 +167,17 @@
 			"Manipur"
 		];
 
+		var isMobile = { 
+			Android: function() { return navigator.userAgent.match(/Android/i); }, 
+			BlackBerry: function() { return navigator.userAgent.match(/BlackBerry/i); }, 
+			iOS: function() { return navigator.userAgent.match(/iPhone|iPad|iPod/i); }, 
+			Opera: function() { return navigator.userAgent.match(/Opera Mini/i); }, 
+			Windows: function() { return navigator.userAgent.match(/IEMobile/i); }, 
+			any: function() { 
+				return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows()); 
+			} 
+		};
+
 		function app() {
 			return {
 				casesTimeSeries: [],
@@ -241,7 +251,7 @@
 						chart: {
 							type: 'area',
 							stacked: false,
-							height: 350,
+							height: isMobile.any() ? 300 : 350,
 							zoom: {
 								enabled: false
 							},
@@ -268,15 +278,20 @@
 						xaxis: {
 							type: 'category'
 						},
+						// yaxis: {
+						// 	labels: {
+						// 		formatter: (value) => { return value + 'k'; }
+						// 	}
+						// },
 						title: {
 							text: 'Last 10 days cases',
 							align: 'left',
-							offsetX: -9
+							offsetX: 6
 						},
 						legend: {
 							position: 'top',
 							horizontalAlign: 'right',
-							offsetX: -10
+							offsetX: 32
 						}
 					};
 
