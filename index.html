@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="description" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<!-- Primary Meta Tags -->
+	<title>Northeast Covid-19 Tracker</title>
+	<meta name="title" content="Content Title" />
+	<meta name="description" content="Content Description." />
+	
+	<link rel="stylesheet" href="tailwind.css">
+	<script src="alpine.js" defer></script>
+	<style>
+		[x-cloak] {
+			display: none;
+		}
+		.rounded-lg {
+			border-radius: 0.75rem;
+		}
+	</style>
+</head>
+
+<body class="antialiased sans-serif bg-gray-300">
+	<div x-data="app()" x-init="getDataByState()" x-cloak class="flex flex-col min-h-screen">
+		 
+		<div class="flex-1">
+
+			<!-- Header -->
+			<div class="bg-blue-900">
+				<div class="container mx-auto px-4 pt-4 md:pt-12 pb-20">
+
+					<!-- Greetings -->
+					<div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+						<div>
+							<h1 class="text-2xl text-gray-300 font-bold mb-1 md:mb-0">Northeast COVID-19 Tracker</h1>
+							<div x-text="'Last updated: '+ lastRefreshed" class="text-gray-500 text-xs"></div>
+						</div>
+					</div>
+					<!-- /Greetings -->
+ 
+				</div>
+			</div>	
+			<!-- /Header -->
+			<div class="px-4">
+				<div class="container mx-auto py-10 -mt-24">
+					<div class="px-4 pt-3 pb-0 md:py-3 bg-white rounded-lg shadow mb-5"> 
+						<div class="font-bold uppercase tracking-wide text-gray-800 mb-2">India</div>
+						 
+						<div class="flex flex-wrap border-t md:border-t-0">
+							<div class="w-1/2 md:w-1/4 py-2 md:py-0 border-b md:border-b-0">
+								<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Confirmed</div>
+								<div class="font-bold text-2xl md:text-3xl text-red-500" x-text="formatNumber(summary.confirmed)"></div>
+							</div>
+							<div class="border-l w-1/2 md:w-1/4 py-2 md:py-0 pl-4 border-b md:border-b-0">
+								<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Active</div>
+								<div class="font-bold text-2xl md:text-3xl text-blue-500" x-text="formatNumber(summary.active)"></div>
+							</div>
+							<div class="md:border-l w-1/2 md:w-1/4 py-2 md:py-0 md:pl-4">
+								<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Recovered</div>
+								<div class="font-bold text-2xl md:text-3xl text-green-500" x-text="formatNumber(summary.recovered)"></div>
+							</div>
+							<div class="border-l w-1/2 md:w-1/4 py-2 md:py-0 pl-4">
+								<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Deaths</div>
+								<div class="font-bold text-2xl md:text-3xl text-gray-500" x-text="formatNumber(summary.deaths)"></div>
+							</div>
+						</div>
+					</div>
+
+					<template x-for="(state, stateIndex) in states" :key="stateIndex">	
+						<div class="px-4 pt-3 pb-0 md:py-3 bg-white rounded-lg shadow mb-5">
+							<div class="flex mb-2 justify-between items-center">
+								<div class="font-bold uppercase tracking-wide text-gray-800" x-text="state.state"></div>
+								<div>
+									<a href="#" @click.prevent="triggerModal(state.state)" class="font-semibold text-xs uppercase tracking-wide text-blue-500 hover:text-blue-700">View Details</a>
+								</div>
+							</div>
+							<div class="flex flex-wrap border-t md:border-t-0">
+								<div class="w-1/2 md:w-1/4 py-2 md:py-0 border-b md:border-b-0">
+									<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Confirmed</div>
+									<div class="font-bold text-2xl md:text-3xl text-red-500" x-text="formatNumber(state.confirmed)"></div>
+								</div>
+								<div class="border-l w-1/2 md:w-1/4 py-2 md:py-0 pl-4 border-b md:border-b-0">
+									<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Active</div>
+									<div class="font-bold text-2xl md:text-3xl text-blue-500" x-text="formatNumber(state.active)"></div>
+								</div>
+								<div class="md:border-l w-1/2 md:w-1/4 py-2 md:py-0 md:pl-4">
+									<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Recovered</div>
+									<div class="font-bold text-2xl md:text-3xl text-green-500" x-text="formatNumber(state.recovered)"></div>
+								</div>
+								<div class="border-l w-1/2 md:w-1/5 py-2 md:py-0 pl-4">
+									<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Deaths</div>
+									<div class="font-bold text-2xl md:text-3xl text-gray-500" x-text="formatNumber(state.deaths)"></div>
+								</div>
+							</div>
+						</div>	
+					</template>
+				</div>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<div class="container mx-auto px-4 py-10">
+			<p class="text-gray-600">Made in Guwahati by <a class="text-blue-500 hover:text-blue-600" href="https://twitter.com/mithicher">@mithicher</a>. Powered by api from <a class="text-blue-500 hover:text-blue-600" href="https://api.covid19india.org/">https://api.covid19india.org/</a></p>
+		</div>
+		<!-- /Footer -->
+
+		<!-- Modal -->
+		<div style=" background-color: rgba(0, 0, 0, 0.8)" class="fixed z-40 top-0 right-0 left-0 bottom-0 h-full w-full" x-show.transition.opacity="openModal" @click="openModal = false">
+			<div class="p-4 max-w-xl mx-auto relative absolute left-0 right-0 overflow-hidden mt-24">
+				<div class="shadow absolute z-20 right-0 top-0 w-10 h-10 rounded-full bg-white text-gray-500 hover:text-gray-800 inline-flex items-center justify-center cursor-pointer"
+					x-on:click="openModal = false">
+					<svg class="fill-current w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+						<path
+							d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z" />
+					</svg>
+				</div>
+
+				<div class="shadow w-full rounded-lg bg-white overflow-hidden w-full block overflow-y-auto" style="height: 420px">
+					<div class="sticky top-0 bg-white pt-4 shadow-sm px-8 pb-2">		
+						<div x-text="districtState" class="text-xl font-bold mb-2 text-gray-800"></div>
+						<div class="flex py-1 justify-between items-center">
+							<div class="font-semibold text-xs uppercase text-gray-500 tracking-wide">District</div>
+							<div class="font-semibold text-xs uppercase text-gray-500 tracking-wide">Confirmed</div>
+						</div>
+					</div>
+
+					<!-- <div x-html="JSON.stringify(districtData)"></div> -->
+					<div class="px-8 pt-2 pb-8">
+						<template x-for="(district, index) in districtData" :key="index">	
+							<div class="flex py-2 border-b border-gray-200 justify-between items-center">
+								<div class="text-sm uppercase text-gray-700 tracking-wide" x-text="district.district"></div>
+								<div class="text-sm uppercase pr-4 text-gray-700 tracking-wide" x-text="district.confirmed"></div>
+							</div>
+						</template>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Modal -->
+
+	</div>
+
+	<script>
+		const neStates = [
+			"Assam",
+			"Sikkim",
+			"Meghalaya",
+			"Nagaland",
+			"Mizoram",
+			"Tripura",
+			"Arunachal Pradesh",
+			"Manipur"
+		];
+
+		function app() {
+			return {
+				states: [],
+				summary: {},
+				districtData: [],
+				districtState: '',
+				lastRefreshed: '',
+				openModal: false,
+
+				getDataByState() {
+					// fetch('https://api.rootnet.in/covid19-in/stats/latest')
+					fetch('https://api.covid19india.org/data.json')
+						.then(response => response.json())
+						.then(data => {
+							this.summary = data.statewise[0];
+							this.lastRefreshed = data.statewise[0].lastupdatedtime;
+							
+							this.states = data.statewise.filter(d => {
+								if (neStates.includes(d.state)) {
+									return d;
+								}
+							}).sort((a, b) => b.confirmed - a.confirmed);
+
+							console.log(this.states);
+						});
+				},
+
+				triggerModal(stateName) {
+					this.openModal = true;
+					fetch('https://api.covid19india.org/v2/state_district_wise.json')
+						.then(response => response.json())
+						.then(data => {
+							let result = data.filter(d => {
+								if (d.state === stateName) {
+									return d.districtData.sort((a, b) => b.confirmed - a.confirmed);
+								}
+							});
+
+							this.districtData = result[0].districtData;
+							this.districtState = result[0].state;
+						});
+				},
+			
+				formatNumber(number) {
+					return new Intl.NumberFormat().format(number);
+				},
+			}
+		}
+	</script>
+
+
+</body>
+
+</html>
