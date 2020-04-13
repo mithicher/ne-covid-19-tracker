@@ -44,7 +44,7 @@
 					<div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
 						<div>
 							<h1 class="text-2xl text-gray-300 font-bold mb-1 md:mb-0">Northeast COVID-19 Tracker</h1>
-							<div x-text="'Last updated: '+ lastRefreshed" class="text-gray-500 text-xs"></div>
+							<div x-text="'Last updated: '+ formatDateAndTime(lastRefreshed)" class="text-gray-500 text-xs"></div>
 						</div>
 					</div>
 				</div>
@@ -65,7 +65,10 @@
 						<div class="flex flex-wrap border-t md:border-t-0">
 							<div class="w-1/2 md:w-1/4 py-2 md:py-0 border-b md:border-b-0">
 								<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Confirmed</div>
-								<div class="font-bold text-2xl md:text-3xl text-red-500" x-text="formatNumber(summary.confirmed)"></div>
+								<div>
+									<span class="font-bold text-2xl md:text-3xl text-red-500" x-text="formatNumber(summary.confirmed)"></span>
+									<span class="font-bold text-sm text-red-500" x-text="'[' + formatNumber(summary.deltaconfirmed) +']'"></span>
+								</div>
 							</div>
 							<div class="border-l w-1/2 md:w-1/4 py-2 md:py-0 pl-4 border-b md:border-b-0">
 								<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Active</div>
@@ -73,11 +76,17 @@
 							</div>
 							<div class="md:border-l w-1/2 md:w-1/4 py-2 md:py-0 md:pl-4">
 								<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Recovered</div>
-								<div class="font-bold text-2xl md:text-3xl text-green-500" x-text="formatNumber(summary.recovered)"></div>
+								<div>
+									<span class="font-bold text-2xl md:text-3xl text-green-500" x-text="formatNumber	(summary.recovered)"></span>
+									<span class="font-bold text-sm text-green-500" x-text="'[' + formatNumber(summary.deltarecovered) +']'"></span>
+								</div>
 							</div>
 							<div class="border-l w-1/2 md:w-1/4 py-2 md:py-0 pl-4">
 								<div class="font-bold uppercase text-xs tracking-wide text-gray-600">Deaths</div>
-								<div class="font-bold text-2xl md:text-3xl text-gray-500" x-text="formatNumber(summary.deaths)"></div>
+								<div>
+									<span class="font-bold text-2xl md:text-3xl text-gray-500" x-text="formatNumber	(summary.deaths)"></span>
+									<span class="font-bold text-sm text-gray-500" x-text="'[' + formatNumber(summary.deltadeaths) +']'"></span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -166,6 +175,7 @@
 			"Arunachal Pradesh",
 			"Manipur"
 		];
+		const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 		var isMobile = { 
 			Android: function() { return navigator.userAgent.match(/Android/i); }, 
@@ -201,16 +211,16 @@
 								}
 							}).sort((a, b) => b.confirmed - a.confirmed);
 
-							this.casesTimeSeries['confirmed'] = data.cases_time_series.slice(data.cases_time_series.length - 10, data.cases_time_series.length).map(ts => ts.dailyconfirmed);
+							this.casesTimeSeries['confirmed'] = data.cases_time_series.slice(Math.max(data.cases_time_series.length - 10, 0)).map(ts => ts.dailyconfirmed);
 							
-							this.casesTimeSeries['recovered'] = data.cases_time_series.slice(data.cases_time_series.length - 10, data.cases_time_series.length).map(ts => ts.dailyrecovered);
+							this.casesTimeSeries['recovered'] = data.cases_time_series.slice(Math.max(data.cases_time_series.length - 10, 0)).map(ts => ts.dailyrecovered);
 							
-							this.casesTimeSeries['death'] = data.cases_time_series.slice(data.cases_time_series.length - 10, data.cases_time_series.length).map(ts => ts.dailydeceased);
+							this.casesTimeSeries['death'] = data.cases_time_series.slice(Math.max(data.cases_time_series.length - 10, 0)).map(ts => ts.dailydeceased);
 							
-							this.casesTimeSeries['dates'] = data.cases_time_series.slice(data.cases_time_series.length - 10, data.cases_time_series.length).map(ts => ts.date);
+							this.casesTimeSeries['dates'] = data.cases_time_series.slice(Math.max(data.cases_time_series.length - 10, 0)).map(ts => ts.date);
 
 							this.drawSeriesChart();
-							// console.log(this.casesTimeSeries);
+							// console.log(cases_time_series);
 						});
 				},
 
@@ -232,6 +242,34 @@
 			
 				formatNumber(number) {
 					return new Intl.NumberFormat().format(number);
+				},
+
+				formatDateAndTime(date) {
+					if (!date) {
+    					return null;
+					}
+					
+					let givenDate = date.split(' ');
+					let reformattedDate = givenDate[0].split('/')[2] + '-' + givenDate[0].split('/')[1] + '-' + givenDate[0].split('/')[0] +' '+ givenDate[1];
+					
+					const DAY_IN_MS = 86400000; // 24 * 60 * 60 * 1000
+					const today = new Date();
+					const yesterday = new Date(today - DAY_IN_MS);
+					const d = new Date(reformattedDate);
+					const day = d.getDate();
+  					const month = MONTH_NAMES[d.getMonth()];
+
+					const seconds = Math.round((today - d) / 1000);
+  					const minutes = Math.round(seconds / 60);
+					const hours = Math.round(minutes / 60);
+
+					if (seconds < 60) {
+						return `${ seconds }s ago, ${month} ${day}`;
+					} else if (minutes < 60) {
+						return `${ minutes }m ago, ${month} ${day}`;
+					} else {
+						return `${ hours }h ago, ${month} ${day}`;
+					}
 				},
 
 				drawSeriesChart() {
@@ -276,7 +314,8 @@
 						labels: this.casesTimeSeries['dates'],
 						tickPlacement: 'between',
 						xaxis: {
-							type: 'category'
+							// type: 'category',
+							// categories: this.casesTimeSeries['dates']
 						},
 						// yaxis: {
 						// 	labels: {
