@@ -1,6 +1,9 @@
 {
 	"name":"Northeast COVID19 Tracker",
 	"short_name":"CV19-NE",
+	"lang": "en-GB",
+	"start_url": "/index.html",
+	"scope": "/",
 	"icons":[
 		{
 			"src":"/favicon/android-chrome-192x192.png",
