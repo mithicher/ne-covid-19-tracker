@@ -246,6 +246,8 @@
 									return d.districtData.sort((a, b) => b.confirmed - a.confirmed);
 								}
 							});
+							this.districtData = [];
+							this.districtState = '';
 
 							this.districtData = result[0].districtData;
 							this.districtState = result[0].state;
