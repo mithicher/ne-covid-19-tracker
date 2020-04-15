@@ -145,9 +145,7 @@
 
 		<!-- Modal -->
 		<div style=" background-color: rgba(0, 0, 0, 0.8);" class="z-30 mx-auto fixed inset-0 h-full w-full flex items-center overflow-y-auto" x-show.transition.opacity="openModal">
-			
-			<div @click="openModal = false" class="z-20 fixed inset-0 h-full w-full"></div>
-
+			<div x-show="openModal" @click="openModal = false" class="z-20 fixed inset-0 h-full w-full"></div>
 			<div class="relative p-4 max-w-xl mx-auto overflow-y-auto mt-4 rounded-lg w-full relative z-30">
 				<div class="absolute shadow z-30 right-0 top-0 w-10 h-10 rounded-full bg-white text-gray-500 hover:text-gray-800 inline-flex items-center justify-center cursor-pointer"
 					x-on:click="openModal = false">
