@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 	<meta name="title" content="Northeast COVID19 Tracker">
 	<meta name="description" content="COVID19 Coronavirus Pandemic stats from Northeast India. Track total confirmed, active, recovered and death cases in the Northeast region of India.">
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta http-equiv="refresh" content="900">
 
 	<title>Northeast COVID19 Tracker</title>
@@ -38,6 +38,9 @@
 	<link rel="stylesheet" href="tailwind.css">
 	<script src="alpine.js" defer></script>
 	<style>
+		html, a[href], button {
+			touch-action: manipulation;
+		}
 		body {
 			-webkit-tap-highlight-color: transparent;
 			font-family: 'IBM Plex Sans', 'sans-serif';
@@ -180,15 +183,15 @@
 
 		<!-- Modal -->
 		<div style=" background-color: rgba(0, 0, 0, 0.8);" class="z-30 mx-auto fixed inset-0 h-full w-full flex items-center overflow-y-auto" x-show.transition.opacity="openModal">
-			<div x-show="openModal" @click="openModal = false" class="z-20 fixed inset-0 h-full w-full"></div>
+			<button type="button" x-show="openModal" @click="openModal = false" class="focus:outline-none z-20 fixed inset-0 h-full w-full"></button>
 			<div class="relative p-4 max-w-xl mx-auto overflow-y-auto mt-4 rounded-lg w-full relative z-30">
-				<div class="absolute shadow z-30 right-0 top-0 w-10 h-10 rounded-full bg-white text-gray-500 hover:text-gray-800 inline-flex items-center justify-center cursor-pointer"
-					x-on:click="openModal = false">
+				<button type="button" class="focus:outline-none absolute shadow z-30 right-0 top-0 w-10 h-10 rounded-full bg-white text-gray-500 hover:text-gray-800 inline-flex items-center justify-center cursor-pointer"
+					@click="openModal = false">
 					<svg class="fill-current w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<path
 							d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z" />
 					</svg>
-				</div>
+				</button>
 
 				<div class="shadow w-full rounded-lg bg-white w-full block overflow-y-auto" style="height: 420px">
 					<div class="sticky top-0 bg-white pt-4 shadow-sm px-8 pb-2">		
