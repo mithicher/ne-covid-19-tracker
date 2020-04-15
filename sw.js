@@ -21,7 +21,7 @@ self.addEventListener('activate', event => {
 		}));
 	  }).then(() => self.clients.claim())
 	);
-  });
+});
 
 self.addEventListener('fetch', function(event) {
 	event.respondWith(caches.match(event.request).then(function(response) {
