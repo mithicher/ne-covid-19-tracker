@@ -18,7 +18,9 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="application-name" content="CV19-NE">
 	<meta name="apple-mobile-web-app-title" content="CV19-NE">	
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
 	<meta name="msapplication-starturl" content="/">
+
 	 
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website">
@@ -36,6 +38,11 @@
 	<link rel="stylesheet" href="tailwind.css">
 	<script src="alpine.js" defer></script>
 	<style>
+		body {
+			-webkit-user-select: none;
+			-webkit-tap-highlight-color: transparent;
+			-webkit-touch-callout: none;
+		}
 		[x-cloak] {
 			display: none;
 		}
@@ -48,13 +55,12 @@
 <body class="antialiased sans-serif bg-gray-300">
 	<div x-data="app()" x-init="getDataByState()" x-cloak class="flex flex-col min-h-screen">		 
 		<div class="flex-1">
-
 			<!-- Header -->
 			<div class="bg-blue-900">
 				<div class="container mx-auto px-4 pt-4 md:pt-12 pb-20">
-					<div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+					<div class="flex flex-col md:flex-row md:justify-between md:items-center mb-2">
 						<div>
-							<h1 class="text-2xl text-gray-300 font-bold mb-1 md:mb-0">Northeast COVID-19 Tracker</h1>
+							<h1 class="text-xl sm:text-2xl text-gray-300 font-bold mb-1 md:mb-0">Northeast COVID-19 Tracker</h1>
 							<div x-text="'Last updated: '+ formatDateAndTime(lastRefreshed)" class="text-gray-500 text-xs"></div>
 						</div>
 					</div>
@@ -141,9 +147,12 @@
 		<!-- /Footer -->
 
 		<!-- Modal -->
-		<div style=" background-color: rgba(0, 0, 0, 0.8)" class="fixed z-40 right-0 left-0 bottom-0 h-full w-full" x-show.transition.opacity="openModal" @click="openModal = false">
-			<div class="p-4 max-w-xl mx-auto relative absolute left-0 right-0 overflow-hidden mt-16">
-				<div class="shadow absolute z-20 right-0 top-0 w-10 h-10 rounded-full bg-white text-gray-500 hover:text-gray-800 inline-flex items-center justify-center cursor-pointer"
+		<div style=" background-color: rgba(0, 0, 0, 0.8);" class="z-30 mx-auto fixed inset-0 h-full w-full flex items-center overflow-y-auto" x-show.transition.opacity="openModal">
+			
+			<div @click="openModal = false" class="z-20 fixed inset-0 h-full w-full"></div>
+
+			<div class="relative p-4 max-w-xl mx-auto overflow-y-auto mt-4 rounded-lg w-full relative z-30">
+				<div class="absolute shadow z-30 right-0 top-0 w-10 h-10 rounded-full bg-white text-gray-500 hover:text-gray-800 inline-flex items-center justify-center cursor-pointer"
 					x-on:click="openModal = false">
 					<svg class="fill-current w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<path
